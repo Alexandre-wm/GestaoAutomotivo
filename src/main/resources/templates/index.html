@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestão de Estoque - Sistema Automotivo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <span class="navbar-brand mb-0 h1"><i class="fa-solid fa-car"></i> Sistema Automotivo - Gestão de Estoque</span>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="card shadow-sm mb-4 border-primary">
+            <div class="card-header bg-primary text-white">
+                <i class="fa-solid fa-plus"></i> <strong>Cadastrar Novo Veículo</strong>
+            </div>
+            <div class="card-body">
+                <form th:action="@{/salvar}" th:object="${novoVeiculo}" method="post" class="row g-3">
+                    <div class="col-md-3">
+                        <input type="text" th:field="*{marca}" class="form-control" placeholder="Marca (ex: Toyota)" required>
+                    </div>
+                    <div class="col-md-3">
+                        <input type="text" th:field="*{modelo}" class="form-control" placeholder="Modelo (ex: Corolla)" required>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" th:field="*{ano}" class="form-control" placeholder="Ano" min="1886" max="2027" required>
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" step="0.01" th:field="*{preco}" class="form-control" placeholder="Preço" min="0" required>
+                    </div>
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-success w-100"><i class="fa-solid fa-check"></i> Adicionar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
+                <div>
+                    <i class="fa-solid fa-list"></i> <strong>Veículos Cadastrados</strong>
+                </div>
+                <form th:action="@{/}" method="get" class="d-flex m-0">
+                    <input type="text" name="palavraChave" class="form-control form-control-sm me-2" placeholder="Buscar marca ou modelo..." th:value="${param.palavraChave}">
+                    <button type="submit" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-magnifying-glass"></i> Buscar</button>
+                    <a th:href="@{/}" class="btn btn-outline-secondary btn-sm ms-1"><i class="fa-solid fa-eraser"></i> Limpar</a>
+                </form>
+            </div>
+            <div class="card-body p-0">
+                <table class="table table-hover table-striped mb-0">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>ID</th>
+                            <th>Marca</th>
+                            <th>Modelo</th>
+                            <th>Ano</th>
+                            <th>Preço</th>
+                            <th class="text-center">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="v : ${veiculos}">
+                            <td th:text="${v.id}"></td>
+                            <td th:text="${v.marca}"></td>
+                            <td th:text="${v.modelo}"></td>
+                            <td th:text="${v.ano}"></td>
+                            <td th:text="${'R$ ' + #numbers.formatDecimal(v.preco, 1, 'POINT', 2, 'COMMA')}"></td>
+                            <td class="text-center">
+                                <a th:href="@{/editar/{id}(id=${v.id})}" class="btn btn-outline-primary btn-sm me-1">
+                                    <i class="fa-solid fa-pen"></i> Editar
+                                </a>
+                                <a th:href="@{/deletar/{id}(id=${v.id})}" class="btn btn-outline-danger btn-sm">
+                                    <i class="fa-solid fa-trash"></i> Excluir
+                                </a>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(veiculos)}">
+                            <td colspan="6" class="text-center text-muted py-4">Nenhum veículo encontrado.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
